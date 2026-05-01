@@ -48,28 +48,150 @@
 ## Template
 
 ```cpp
+// Author : ME
 #include <bits/stdc++.h>
-#include<chrono>
-#define int long long
-#define ld long double
-#define endl '\n'
-#define ep cout << fixed << setprecision(10)
-#define all(x) x.begin(), x.end()
-#define allr(x) x.rbegin(), x.rend()
-#define FIO ios_base::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
-// count the leading zeros __builtin_clz()
-// count the trailing zeros __builtin_ctz()
-// count the number of set bits
-__builtin_popcount()
-// count the number of set bits in long long
-__builtin_popcountll()
-#pragma GCC optimize("O3,unroll-loops")
-#pragma GCC
-target("avx2,bmi,bmi2,lzcnt,popcnt")
-int dx_all[8] = { 1, 0, -1, 0, 1, 1, -1, -1 }, dy_all[8] = { 0, 1, 0, -1, -1, 1, -1, 1 };
-int dx[4] = { 0, 1, -1, 0 }, dy[4] = { 1, 0, 0, -1 };
-int knight_dx[] = { +2, +1, -1, -2, -2, -1, +1, +2 }, knight_dy[] = { +1, +2, +2, +1, -1, -2, -2, -1 };
 using namespace std;
+using ll = long long;
+using ld = long double;
+using ull = unsigned long long;
+
+#define endl '\n'
+#define int ll
+#define ep cout << fixed << setprecision(12)
+#define all(x) (x).begin(), (x).end()
+#define allr(x) (x).rbegin(), (x).rend()
+
+const int INF = 0x3f3f3f3f;
+const ll LINF = 0x3f3f3f3f3f3f3f3f;
+const int mod = 1e9 + 7;
+//const int mod = 998244353;
+const ld PI = acosl(-1.0L);
+int dx[] = {0,0,1,-1};
+int dy[] = {1,-1,0,0};
+
+int gcd(int a, int b) { return b ? gcd(b, a % b) : a; }
+int lcm(int a, int b) { return a / gcd(a, b) * b; }
+
+
+void fileio() {
+    #ifndef ONLINE_JUDGE
+     freopen("input.txt", "r", stdin);
+     freopen("output.txt", "w", stdout);
+    #endif
+}
+
+void fastio() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+}
+
+const int N = 1e5+5 ,M = 23;
+
+void Magek() {
+    
+}
+
+int32_t main() {
+    //fileio();
+    fastio();
+    int t = 1;
+    //cin >> t;
+    while (t--) Magek();
+    return 0;
+}
+```
+
+## Combinatorics
+
+```cpp
+// nCr without mod (Recursive + Memoization to avoid TLE)
+// Don't forget to initialize the array in main: memset(dp_nCr, -1, sizeof(dp_nCr));
+int dp_nCr[1005][1005]; 
+int nCr_rec(int n, int r) {
+    if (r < 0 || r > n) return 0;
+    if (r == 0 || r == n) return 1;
+    if (dp_nCr[n][r] != -1) return dp_nCr[n][r];
+    return dp_nCr[n][r] = nCr_rec(n - 1, r - 1) + nCr_rec(n - 1, r);
+}
+
+// nPr without mod (Recursive)
+int nPr_rec(int n, int r) {
+    if (r < 0 || r > n) return 0;
+    if (r == 0) return 1;
+    return n * nPr_rec(n - 1, r - 1);
+}
+
+// Arrays to store factorials and their modular inverses
+int fact[N], inv[N];
+
+// Precomputation function for factorials and inverses
+void build() {
+    fact[0] = inv[0] = 1;
+    for (int i = 1; i < N; i++) {
+        fact[i] = fact[i - 1] * i % mod;
+    }
+    inv[N - 1] = modInverse(fact[N - 1]);
+    for (int i = N - 2; i >= 1; i--) {
+        inv[i] = inv[i + 1] * (i + 1) % mod;
+    }
+}
+
+// Calculate combinations (nCr) with mod
+int nCr(int n, int r) {
+    if (r < 0 || r > n) return 0;
+    return fact[n] * inv[r] % mod * inv[n - r] % mod;
+}
+
+// Calculate permutations (nPr) with mod
+int nPr(int n, int r) {
+    if (r < 0 || r > n) return 0;
+    return fact[n] * inv[n - r] % mod;
+}
+
+// Stars and Bars: Calculate ways to distribute n identical items into k distinct bins
+int starsAndBars(int n, int k) {
+    if (n < 0 || k < 0) return 0;
+    if (n == 0 && k == 0) return 1;
+    return nCr(n + k - 1, k - 1);
+}
+
+// Catalan Numbers: Useful for problems like valid parentheses or number of BSTs
+int catalan(int n) {
+    return nCr(2 * n, n) * modInverse(n + 1) % mod;
+}
+
+// Array to store Derangements values
+int derangement[N];
+
+// Precomputation for permutations where no element appears in its original position
+void buildDerangement() {
+    derangement[0] = 1;
+    derangement[1] = 0;
+    for (int i = 2; i < N; i++) {
+        derangement[i] = (i - 1) * (derangement[i - 1] + derangement[i - 2]) % mod;
+    }
+}
+
+// Add two numbers under modulo
+int add(int a, int b) {
+    return (a % mod + b % mod) % mod;
+}
+
+// Subtract two numbers under modulo
+int sub(int a, int b) {
+    return (a % mod - b % mod + mod) % mod;
+}
+
+// Multiply two numbers under modulo
+int mul(int a, int b) {
+    return (a % mod * b % mod) % mod;
+}
+
+// Divide two numbers under modulo (requires modInverse function)
+int div(int a, int b) {
+    return mul(a, modInverse(b));
+}
 ```
 
 ## Merge_Segmants
@@ -95,143 +217,6 @@ void Merge_Segmants() {
 }
 ```
 
-## MEX
-
-```cpp
-int MEX(vector<int>& v){
-    int n = v.size();
-    bool exists[n];
-    memset(exists, 0, sizeof exists);
-    for (auto element : v)
-    if (element < n) exists[element] = true;
-    for (int i = 0; i < n; ++i)
-    if (!exists[i]) return i;
-    return n;}
-```
-
-## Co-ordinate Compression
-
-```cpp
-vector<int> compress(vector<int>&v) {
-    vector<int> temp = v;
-    sort(temp.begin(), temp.end());
-    temp.erase(unique(temp.begin(), temp.end()), temp.end());
-    vector<int> ret;
-    for (int x : v) {
-        ret.push_back(lower_bound(temp.begin(), temp.end(), x) - temp.begin());
-    } return ret;
-}
-```
-
-## 2D Partial
-
-```cpp
-void PartialSum_in2D(int x1, int y1, int x2, int
-y2, vector<vector<int>>& Prefix) {
-    if (x1 > x2) swap(x1, x2);
-    if (y1 > y2) swap(y1, y2);
-    Prefix[x1][y1]++; Prefix[x2 + 1][y1]--;
-    Prefix[x1][y2 + 1]--;Prefix[x2 + 1][y2 + 1]++;
-}
-```
-
-## 2D Prefix
-
-```cpp
-vector<vector<int>> buildPrefixSum2D(const
-vector<vector<int>>& grid) {
-    int n = grid.size(), m = grid[0].size();
-    vector<vector<int>> pref(n + 1, vector<int>(m + 1, 0));
-    for (int i = 1; i <= n; ++i)
-    for (int j = 1; j <= m; ++j)
-    pref[i][j] = grid[i - 1][j - 1] + pref[i - 1][j] + pref[i][j - 1] - pref[i - 1][j - 1];
-    return pref;}
-int queryPrefixSum2D(const
-vector<vector<int>>& pref, int x1, int y1, int
-x2, int y2) {
-    // x1, y1, x2, y2 are 1-based and inclusive
-    return pref[x2][y2] - pref[x1 - 1][y2] - pref[x2][y1 - 1] + pref[x1 - 1][y1 - 1];
-}
-// minimum adjacent swaps to convert a to b
-int cost(vector<int>& a, vector<int>& b) {
-    int n = a.size();
-    map<int, deque<int>> pos;
-    ordered_set<int> st;
-    int res = 0;
-    for (int i = 0; i < n; ++i) {
-        pos[a[i]].push_back(i);
-        st.insert(i);
-    }
-    for (int i = 0; i < n; ++i) {
-        int idx = pos[b[i]].front();
-        pos[b[i]].pop_front();
-        res += st.order_of_key(idx);
-        st.erase(idx);
-    } return res;
-}
-```
-
-## Rotate Matrix 90 Degree
-
-```cpp
-vector<vector<int>> rotate90(vector<vector<int>>& g) {
-    int n = g.size(), m = g[0].size();
-    vector res(m, vector<int>(n));
-    for (int i = 0; i < m; ++i)
-    for (int j = 0; j < n; ++j)
-    res[i][j] = g[n - j - 1][i];
-    return res;
-}
-```
-
-## Counting
-
-```cpp
-mod = 1e9 + 7;
-vector<int> fact, invr;
-int mod_add(int a, int b) { return (a + b) % mod; }
-int mod_sub(int a, int b) { return (a - b + mod)
-    % mod; }
-int mod_mul(int a, int b) { return (1LL * a * b)
-    % mod; }
-int power(int a, int b) {
-    int res = 1;
-    while (b) {
-        if (b & 1) res = mod_mul(res, a);
-        a = mod_mul(a, a);
-        b >>= 1;
-    }
-    return res;
-}
-int mod_inv(int a) {
-    return power(a, mod - 2);
-}
-void init_comb(int n) {
-    fact.assign(n + 1, 1);
-    invr.assign(n + 1, 1);
-    for (int i = 1; i <= n; ++i)
-    fact[i] = mod_mul(fact[i - 1], i);
-    invr[n] = mod_inv(fact[n]);
-    for (int i = n - 1; i >= 0; --i)
-    invr[i] = mod_mul(invr[i + 1], i + 1);
-}
-int nPr(int n, int r) {
-    if (n < r) return 0;
-    return mod_mul(fact[n], invr[n - r]);
-}
-int nCr(int n, int r) {
-    if (n < r) return 0;
-    return mod_mul(fact[n], mod_mul(invr[r], invr[n - r]));
-}
-int SandB(int n, int k) {
-    if (std::min(n, k) < 0) return 0;
-    return nCr(n + k - 1, k - 1);
-}
-int catalan(int n) {
-    int c = nCr(n * 2, n);
-    return mod_mul(c, mod_inv(n + 1));
-}
-```
 
 ## isPrime
 
@@ -244,7 +229,10 @@ bool isPrime(int n) { // O(sqrt(n))
     }
     return true;
 }
-Sieve1
+```
+
+## Sieve
+```cpp
 const int N = 1e7 + 6;
 bool is_prime[N];
 void sieve() { // O(N) ~= O(N*log(log(N)))
@@ -258,9 +246,8 @@ void sieve() { // O(N) ~= O(N*log(log(N)))
         }
     }
 }
-Sieve2
-// pr is all the primes, low[x] is the lowest
-prime of x
+
+// pr is all the primes, low[x] is the lowest prime of x
 vector<int> pr, low;
 void Sieve(int n) {
     low.assign(n + 1, 0);
@@ -275,19 +262,51 @@ void Sieve(int n) {
         }
     }
 }
-Prime factors log
 // prime factors in log x
-vector<int> pf(int x) {
-    vector<int> factors;
+vector<pair<int,int>> pf(int x) {
+    vector<pair<int,int>> f;
     while (x > 1) {
-        factors.push_back(low[x]);
-        x /= low[x];
+        int p = low[x], c = 0;
+        while (x % p == 0) x /= p, c++;
+        f.push_back({p, c});
     }
-    return factors;
+    return f;
 }
-Prime factor sqrt
-vector<pair<int, int> > getPrimeFactors(ll n) {
-    // O(sqrt(n))
+
+void gen_divs(int idx, long long cur, vector<pair<int,int>>& f, vector<int>& divs) {
+    if (idx == (int)f.size()) {
+        divs.push_back((int)cur);
+        return;
+    }
+    long long pw = 1;
+    for (int e = 0; e <= f[idx].second; ++e) {
+        gen_divs(idx + 1, cur * pw, f, divs);
+        pw *= f[idx].first;
+    }
+}
+
+vector<int> get_divisors(int x) {
+    vector<int> p = pf(x);
+
+    vector<pair<int,int>> f;
+    for (int i = 0; i < (int)p.size(); ) {
+        int j = i;
+        while (j < (int)p.size() && p[j] == p[i]) j++;
+        f.push_back({p[i], j - i});
+        i = j;
+    }
+
+    vector<int> divs;
+    gen_divs(0, 1, f, divs);
+    sort(divs.begin(), divs.end());
+    return divs;
+}
+
+```
+
+## Prime factor sqrt
+```cpp
+vector<pair<int, int> > getPrimeFactors(ll n) { // O(sqrt(n))
     vector<pair<int, int> > ret;
     for (int p = 2; p * p <= n; p++) {
         int e = 0;
@@ -306,7 +325,7 @@ vector<pair<int, int> > getPrimeFactors(ll n) {
 }
 ```
 
-## DivisibleBy N
+## DivisibleBy Big N
 
 ```cpp
 bool isDivisibleByN(string num , int n) {
@@ -329,6 +348,7 @@ vector<int> divisors(int n) {
         }
     }return ret;
 }
+
 int divUpTo1e18(int N) {
     int ans = 1; // num of div up to 1e18
     for (int p : pr) {
@@ -388,11 +408,16 @@ int divUpTo1e18(int N) {
     }
     return ans;
 }
+```
+## Xor All from 1 to n O(1)
+```cpp
+// prifx xor from 1 to n
 int xorall(int n) {
     if (n % 4 == 0) return n;
     if (n % 4 == 1) return 1;
     if (n % 4 == 2) return n + 1;
-    return 0;}
+    return 0;
+}
 ```
 
 ## Matrix
@@ -422,7 +447,10 @@ Matrix power(Matrix a, int b) {
     }
     return res;
 }
-Solve ax+by+c = 0
+```
+## Solve ax+by+c = 0
+
+```cpp
 #define double long double
 const double EPS = 1e-9;
 pair<complex<double>, complex<double>> solveQuadratic(double a, double
@@ -460,16 +488,6 @@ int countPairsWithGCDX(int x, vector<int>& a) {
 }
 ```
 
-## GCD & LCM
-
-```cpp
-int gcd(int a, int b) {
-    if (b == 0) return a;
-    return gcd(b, a % b);
-}
-int lcm(int a, int b) { return a * (b / gcd(a, b)); }
-```
-
 ## DSU
 
 ```cpp
@@ -500,103 +518,135 @@ struct DSU {
 ## Bridges
 
 ```cpp
-struct Kabary {
-    vector <vector<pair<int, int>>> adj;
-    vector <set<int>> compressed_adj;
-    vector <int> vis, low, depth, is_bridge, node_id;
-    int cur_id = 1, n, m;
-    Kabary(int _n, int _m) {
-        n = _n, m = _m;
-        adj.resize(n + 1);
-        compressed_adj.resize(n + 1);
-        vis.resize(n + 1);
-        low.resize(n + 1, INT_MAX);
-        depth.resize(n + 1, 0);
-        is_bridge.resize(m + 1);
-        node_id.resize(n + 1);
+struct BridgeTree {
+    int n, m, timer, comp_cnt;
+    vector<vector<pair<int, int>>> adj;
+    vector<int> tin, low, vis, comp, is_bridge;
+    vector<int> bridges;
+    vector<vector<int>> tree;
+
+    // Initialize the structure.
+    BridgeTree(int _n = 0, int _m = 0) {
+        init(_n, _m);
     }
-    void add_edge(int u, int v, int idx) {
-        adj[u].emplace_back(v, idx);
-        adj[v].emplace_back(u, idx);
-    }
-    void find_bridges(int u, int p) {
-        vis[u] = 1;
-        for (auto& [v, idx] : adj[u]) {
-            if (v == p) continue;
-            if (vis[v]) {
-                low[u] = min(low[u], depth[v]);
-                continue;
-            } depth[v] = 1 + depth[u];
-            find_bridges(v, u);
-            low[u] = min(low[u], low[v]);
-            if (low[v] > depth[u]) is_bridge[idx] = 1;
-        }
-    }
-    void dfs(int u, int p) {
-        vis[u] = 1;
-        node_id[u] = cur_id;
-        for (auto& [v, idx] : adj[u]) {
-            if (vis[v] or is_bridge[idx] or v == p)
-            continue;
-            dfs(v, u);
-        }
-    }
-    void rebuild_graph() {
+
+    // Reset all containers.
+    void init(int _n, int _m) {
+        n = _n;
+        m = _m;
+        timer = 0;
+        comp_cnt = 0;
+
+        adj.assign(n + 1, {});
+        tin.assign(n + 1, 0);
+        low.assign(n + 1, 0);
         vis.assign(n + 1, 0);
-        for (int i = 1; i <= n; i++) {
+        comp.assign(n + 1, 0);
+        is_bridge.assign(m + 1, 0);
+        bridges.clear();
+        tree.clear();
+    }
+
+    // Add an undirected edge with its unique id.
+    void add_edge(int u, int v, int id) {
+        adj[u].push_back({v, id});
+        adj[v].push_back({u, id});
+    }
+
+    // DFS to find all bridge edges.
+    void dfs_bridges(int u, int peid) {
+        vis[u] = 1;
+        tin[u] = low[u] = ++timer;
+
+        for (auto [v, id] : adj[u]) {
+            if (id == peid) continue;
+
+            if (vis[v]) {
+                low[u] = min(low[u], tin[v]);
+            } else {
+                dfs_bridges(v, id);
+                low[u] = min(low[u], low[v]);
+
+                if (low[v] > tin[u]) {
+                    is_bridge[id] = 1;
+                    bridges.push_back(id);
+                }
+            }
+        }
+    }
+
+    // Find bridges in the whole graph.
+    void build_bridges() {
+        fill(vis.begin(), vis.end(), 0);
+        fill(is_bridge.begin(), is_bridge.end(), 0);
+        bridges.clear();
+        timer = 0;
+
+        for (int i = 1; i <= n; ++i) {
+            if (!vis[i]) dfs_bridges(i, -1);
+        }
+    }
+
+    // DFS to paint one 2-edge-connected component.
+    void dfs_component(int u, int cid) {
+        vis[u] = 1;
+        comp[u] = cid;
+
+        for (auto [v, id] : adj[u]) {
+            if (!vis[v] && !is_bridge[id]) {
+                dfs_component(v, cid);
+            }
+        }
+    }
+
+    // Compress the graph into 2-edge-connected components.
+    void build_components() {
+        fill(vis.begin(), vis.end(), 0);
+        fill(comp.begin(), comp.end(), 0);
+        comp_cnt = 0;
+
+        for (int i = 1; i <= n; ++i) {
             if (!vis[i]) {
-                dfs(i, i);
-                cur_id++;
-            }
-        }
-        for (int i = 1; i <= n; i++) {
-            for (auto& [v, idx] : adj[i]) {
-                compressed_adj[node_id[v]].insert(node_id[i]
-                );
+                ++comp_cnt;
+                dfs_component(i, comp_cnt);
             }
         }
     }
-    void go() { find_bridges(1, 1);
-        rebuild_graph(); }
-};
-```
 
-## LCA (Euler)
+    // Build the bridge tree from the compressed components.
+    void build_tree() {
+        tree.assign(comp_cnt + 1, {});
+        vector<set<int>> tmp(comp_cnt + 1);
 
-```cpp
-struct LCA {
-    int n;
-    vector<pair<int, int>> tour;
-    vector<int> depth, tin, par;
-    SparseTable<pair<int, int>> sp;
-    LCA(int sz) {
-        n = sz + 1;
-        tin.resize(n);
-        depth.resize(n);
-        par.resize(n);
-        tour.reserve(n * 2);
-        sp = SparseTable<pair<int, int>>(2 * n);
-    }
-    void dfs(int u, int p, int d, auto& adj) {
-        tin[u] = (int)tour.size();
-        depth[u] = d;
-        par[u] = p;
-        tour.emplace_back(d, u);
-        for (int v : adj[u]) {
-            if (v == p) continue;
-            dfs(v, u, d + 1, adj);
-            tour.emplace_back(d, u);
+        for (int u = 1; u <= n; ++u) {
+            for (auto [v, id] : adj[u]) {
+                if (comp[u] == comp[v]) continue;
+                tmp[comp[u]].insert(comp[v]);
+            }
+        }
+
+        for (int i = 1; i <= comp_cnt; ++i) {
+            for (int v : tmp[i]) {
+                tree[i].push_back(v);
+            }
         }
     }
-    void build(auto& adj) {
-        dfs(1, 0, 0, adj);
-        sp.build(tour);
+
+    // Run the full pipeline.
+    void build() {
+        build_bridges();
+        build_components();
+        build_tree();
     }
-    int get(int u, int v) {
-        return sp.query(min(tin[u], tin[v]), max(tin[u], tin[v])).second;
+
+    // Check whether two nodes are in the same component.
+    bool same_component(int u, int v) const {
+        return comp[u] == comp[v];
     }
-    int dist(int u, int v) {
-        return depth[u] + depth[v] - 2 * depth[get(u, v)];
+
+    // Check whether an edge is a bridge.
+    bool is_bridge_edge(int id) const {
+        return is_bridge[id];
     }
 };
 ```
@@ -604,42 +654,157 @@ struct LCA {
 ## LCA
 
 ```cpp
-vector<vector<int>> ancestors;
-vector<int> in, out, depth;
-int timer = 0;
-void dfs(int u, int p) {
-    in[u] = timer++, ancestors[u][0] = p, depth[u] = depth[p] + 1;
-    for (int i = 1; i < LOG; i++) {
-        int v = ancestors[u][i - 1];
-        ancestors[u][i] = ancestors[v][i - 1];
+struct LCA {
+    int n, LOG;
+    vector<vector<int>> adj, up;
+    vector<int> depth;
+
+    // Build directly from adjacency list.
+    LCA(const vector<vector<int>>& g, int root = 1) {
+        adj = g;
+        n = adj.size() - 1;
+
+        LOG = 1;
+        while ((1 << LOG) <= n) LOG++;
+
+        up.assign(LOG, vector<int>(n + 1));
+        depth.assign(n + 1, 0);
+
+        dfs(root, root);
     }
-    for (int v : adj[u]) {
-        if (v != p) dfs(v, u);
-    } out[u] = timer - 1;
-}
-int findKth(int u, int k) {
-    for (int i = LOG - 1; i >= 0; i--) {
-        if (k & (1 << i)) {
-            u = ancestors[u][i];
+
+    // DFS to fill parent and depth.
+    void dfs(int u, int p) {
+        up[0][u] = p;
+
+        for (int i = 1; i < LOG; i++) {
+            up[i][u] = up[i-1][up[i-1][u]];
         }
-    } return u;
-}
-int getLCA(int u, int v) {
-    if (depth[u] < depth[v])
-    swap(u, v);
-    u = findKth(u, depth[u] - depth[v]);
-    if (u == v) return u;
-    for (int i = LOG - 1; i >= 0; i--) {
-        if (ancestors[u][i] == ancestors[v][i])
-        continue;
-        u = ancestors[u][i];
-        v = ancestors[v][i];
-    } return ancestors[u][0];
-}
-int getDistance(int u, int v) {
-    int lca = getLCA(u, v);
-    return (depth[u] + depth[v]) - (2 * depth[lca]);
-}
+
+        for (int v : adj[u]) {
+            if (v == p) continue;
+            depth[v] = depth[u] + 1;
+            dfs(v, u);
+        }
+    }
+
+    // Lift node u by k steps.
+    int lift(int u, int k) {
+        for (int i = 0; i < LOG; i++) {
+            if (k & (1 << i)) {
+                u = up[i][u];
+            }
+        }
+        return u;
+    }
+    int kth_ancestor(int u, int k) {
+        return lift(u, k);
+    }
+    // Get LCA of u and v.
+    int lca(int u, int v) {
+        if (depth[u] < depth[v]) swap(u, v);
+
+        u = lift(u, depth[u] - depth[v]);
+
+        if (u == v) return u;
+
+        for (int i = LOG - 1; i >= 0; i--) {
+            if (up[i][u] != up[i][v]) {
+                u = up[i][u];
+                v = up[i][v];
+            }
+        }
+
+        return up[0][u];
+    }
+
+    // Distance between two nodes.
+    int dist(int u, int v) {
+        int w = lca(u, v);
+        return depth[u] + depth[v] - 2 * depth[w];
+    }
+};
+```
+
+## LCA path query
+
+```cpp
+struct LCA {
+    int n, LOG;
+    vector<vector<pair<int,int>>> adj;
+    vector<vector<int>> up;
+    vector<vector<long long>> val;
+    vector<int> depth;
+
+    // Build directly from adjacency list.
+    LCA(const vector<vector<pair<int,int>>>& g, int root = 1) {
+        adj = g;
+        n = adj.size() - 1;
+
+        LOG = 1;
+        while ((1 << LOG) <= n) LOG++;
+
+        up.assign(LOG, vector<int>(n + 1));
+        val.assign(LOG, vector<long long>(n + 1, 0));
+        depth.assign(n + 1, 0);
+
+        dfs(root, root);
+    }
+
+    // DFS to initialize binary lifting tables.
+    void dfs(int u, int p) {
+        for (auto [v, w] : adj[u]) {
+            if (v == p) continue;
+
+            depth[v] = depth[u] + 1;
+            up[0][v] = u;
+            val[0][v] = w;
+
+            for (int i = 1; i < LOG; i++) {
+                up[i][v] = up[i-1][up[i-1][v]];
+                val[i][v] = val[i-1][v] + val[i-1][up[i-1][v]];
+            }
+
+            dfs(v, u);
+        }
+    }
+
+    // Lift with sum.
+    long long lift(int &u, int k) {
+        long long res = 0;
+        for (int i = 0; i < LOG; i++) {
+            if (k & (1 << i)) {
+                res += val[i][u];
+                u = up[i][u];
+            }
+        }
+        return res;
+    }
+
+    // Query sum on path u -> v.
+    long long query(int u, int v) {
+        long long res = 0;
+
+        if (depth[u] < depth[v]) swap(u, v);
+
+        res += lift(u, depth[u] - depth[v]);
+
+        if (u == v) return res;
+
+        for (int i = LOG - 1; i >= 0; i--) {
+            if (up[i][u] != up[i][v]) {
+                res += val[i][u];
+                res += val[i][v];
+                u = up[i][u];
+                v = up[i][v];
+            }
+        }
+
+        res += val[0][u];
+        res += val[0][v];
+        return res;
+    }
+};
 ```
 
 ## Seg Tree
@@ -995,7 +1160,10 @@ struct SqrtDecomposition {
         return sum;
     }
 };
-MOOOO
+```
+
+# MOOOO
+```cpp
 int SQ, res = 0; // Set it to ceil(sqrt(n));
 const int N = 2e5 + 10;
 int arr[N], ans[N], n, q;
@@ -1115,97 +1283,12 @@ void Erase(ordered_multiset& s, int val) {
     s.erase(it);}
 ```
 
-## XOR Basis
-
-```cpp
-struct Basis {
-    int size = 0, n = 0;
-    int basis[lg];
-    Basis() {
-        size = n = 0;
-        for (int i = lg - 1; i >= 0; --i) basis[i] = 0;
-    }
-    bool insert(int x) {
-        n++;
-        for (int i = lg - 1; i >= 0; --i) {
-            if (((x >> i) & 1) == 0) continue;
-            if (not basis[i]) {
-                basis[i] = x, ++size;
-                return true;
-            }
-            x = (x ^ basis[i]);
-        }
-        return false;
-    }
-    bool merge(Basis& w) {
-        bool repeat = false;
-        for (int i = 0; i < lg; ++i)
-        if (w.basis[i] > 0 and not
-        insert(w.basis[i]))
-        repeat = true;
-        return repeat;
-    }
-    bool can(int x) { // if n > size then you can get
-        x = 0
-        for (int i = lg - 1; i >= 0; --i)
-        if (basis[i] and (x & (1LL << i))) x = (x ^ basis[i]);
-        return x == 0;
-    }
-    int count_xors(int x) { // NOTE: Add
-        exponentiation
-        return (can(x) ? (exp(2, n - size) + mod - 1)
-        % mod :0);
-    }
-    int kth(int k) {
-        int x = 0;
-        for (int i = lg - 1, c = size; i >= 0; --i) {
-            if (not basis[i]) continue; --c;
-            if (x & (1LL << i)) {
-                if ((1LL << c) >= k) x = (x ^ basis[i]);
-                else k = k - (1LL << c);
-            }
-            else if (k > (1LL << c)) {
-                x = (x ^ basis[i]), k = k - (1LL << c);
-            }
-        }
-        return x;
-    }
-    int get_max() {
-        int ans = 0;
-        for (int i = lg - 1; i >= 0; --i) {
-            if (basis[i] && not(ans & (1LL << i))) ans = (ans
-            ^ basis[i]);
-        }
-        return ans;
-    }
-    void AND(int x) {
-        vector< int > upd;
-        for (int i = lg - 1; i >= 0; --i) {
-            basis[i] = (basis[i] & x);
-            if (basis[i]) upd.push_back(basis[i]);
-            basis[i] = 0;
-        }
-        for (int& val : upd) insert(val);
-    }
-    void OR(int x) {
-        vector< int > upd;
-        for (int i = lg - 1; i >= 0; --i) {
-            basis[i] = (basis[i] | x);
-            if (basis[i]) upd.push_back(basis[i]);
-            basis[i] = 0;
-        }
-        for (int& val : upd) insert(val);
-    }
-};
-```
-
 ## Hashing 1
 
 ```cpp
 #define MAXLEN 1000010
 constexpr uint64_t mod = (1ULL << 61) - 1;
-const uint64_t seed = chrono::system_clock::now().time_since_epo
-ch().count();
+const uint64_t seed = chrono::system_clock::now().time_since_epoch().count();
 const uint64_t base = mt19937_64(seed)() % (mod / 3) + (mod / 3);
 uint64_t base_pow[MAXLEN];
 int64_t modmul(uint64_t a, uint64_t b) {
@@ -1264,9 +1347,7 @@ struct Hash {
     vector<array<int, M> > prefix, suffix;
     Hash() {
         if (B[0])return;
-        mt19937
-        rng(chrono::system_clock::now().time_since_
-        epoch().count());
+        mt19937rng(chrono::system_clock::now().time_since_epoch().count());
         auto rnd = [&](int a, int b) {
             return a + rng() % (b - a + 1);
         };
@@ -1747,6 +1828,31 @@ struct BinaryTrie {
         long long rk = count_less_than(x + 1) + 1;
         if(rk > tr[0].cnt) return ULLONG_MAX;
         return kth_smallest(rk);
+    }
+
+    void dfs(int u, int i, unsigned long long cur, unsigned long long x, unsigned long long &ans) const {
+        if (i < 0) {
+            if (cur > ans) ans = cur;
+            return;
+        }
+        
+        if ((cur | (x & ((1ULL << (i + 1)) - 1))) <= ans) return;
+        
+        int b = (x >> i) & 1ULL;
+        if (b == 1) {
+            if (tr[u].nxt[1] && tr[tr[u].nxt[1]].cnt) dfs(tr[u].nxt[1], i - 1, cur | (1ULL << i), x, ans);
+            if (tr[u].nxt[0] && tr[tr[u].nxt[0]].cnt) dfs(tr[u].nxt[0], i - 1, cur, x, ans);
+        } else {
+            if (tr[u].nxt[0] && tr[tr[u].nxt[0]].cnt) dfs(tr[u].nxt[0], i - 1, cur, x, ans);
+            if (tr[u].nxt[1] && tr[tr[u].nxt[1]].cnt) dfs(tr[u].nxt[1], i - 1, cur, x, ans);
+        }
+    }
+    
+    unsigned long long max_and_value(unsigned long long x) const {
+        if (empty()) return 0;
+        unsigned long long ans = 0;
+        dfs(0, MAX_BIT, 0, x, ans);
+        return ans;
     }
 };
 ```
